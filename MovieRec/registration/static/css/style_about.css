@@ -1,0 +1,85 @@
+/* static/css/style.css */
+
+/* Body */
+body {
+    background-color: #000;
+    color: #fff;
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Container */
+.container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 30px;
+}
+
+/* Heading */
+h1 {
+    font-size: 48px;
+    font-weight: bold;
+    color: #36a9e1;
+    text-align: center;
+}
+
+/* Subheading */
+h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #36a9e1;
+    text-align: center;
+}
+
+/* Paragraph */
+p {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+/* Link */
+a {
+    color: #36a9e1;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #1d7fbd;
+    text-decoration: underline;
+}
+
+/* Quote */
+blockquote {
+    border-left: 3px solid #36a9e1;
+    padding-left: 20px;
+    font-size: 18px;
+    font-style: italic;
+    margin: 20px 0;
+}
+
+/* Image */
+img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+/* Social Media Icons */
+.social-icons {
+    text-align: center;
+}
+
+.social-icons a {
+    display: inline-block;
+    margin: 0 10px;
+    color: #36a9e1;
+    font-size: 24px;
+    transition: color 0.3s ease;
+}
+
+.social-icons a:hover {
+    color: #1d7fbd;
+}
+
+/* Additional styles for Cyberpunk theme */
+/* Add your custom CSS styles here for the Cyberpunk theme, such as neon colors, futuristic fonts, glitch effects, etc. */

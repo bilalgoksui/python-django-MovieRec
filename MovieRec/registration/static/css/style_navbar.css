@@ -1,0 +1,43 @@
+
+.navbar {
+    padding: 10px 20px;
+    display: flex; /* Add this property */
+    justify-content: space-between; /* Add this property */
+    list-style-type: none 
+  }
+  
+  .navbar-brand {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffff;
+    
+  }
+  
+  .navbar-nav {
+    display: flex; /* Add this property */
+    align-items: center; /* Add this property */
+  }
+  
+  .navbar-nav .nav-link {
+    font-size: 18px;
+    color: #f0f0f0;
+    margin-right: 10px; /* Set margin-right to 0 to remove spacing between links */
+    padding: 5px 10px; /* Add padding for spacing around links */
+    display: block; /* Change display to block to create a list view appearance */
+    text-align: center; /* Center the link text in each list item */
+    list-style-type: none 
+  }
+  
+  .navbar-nav .nav-link:hover {
+    color: #007bff;
+  }
+  
+  .navbar-toggler-icon {
+    background-color: #333;
+  }
+  
+  .navbar-toggler-icon:hover {
+    background-color: #007bff;
+  }
+  
+  

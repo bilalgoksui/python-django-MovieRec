@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dropdown Menu</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.4/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <style>
+    .custom-button {
+      background-color: #007bff;
+      color: #ffffff;
+      padding: 10px 20px;
+      cursor: pointer;
+      border: none;
+      outline: none;
+    }
+
+    .custom-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .custom-dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: #ffffff;
+      padding: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      z-index: 999;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: opacity 0.3s, transform 0.3s;
+    }
+
+    .custom-dropdown:hover .custom-dropdown-menu {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .custom-dropdown-item {
+      display: block;
+      padding: 5px 0;
+      color: #333333;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .custom-dropdown-item:hover {
+      color: #007bff;
+    }
+  </style>
+</head>
+<body>
+
+<div class="custom-dropdown">
+  <button class="custom-button">Profile</button>
+  <div class="custom-dropdown-menu">
+    <a href="#settings" class="custom-dropdown-item">Settings</a>
+    <a href="#profile" class="custom-dropdown-item">Profile</a>
+    <a href="#logout" class="custom-dropdown-item">Logout</a>
+  </div>
+</div>
+
+</body>
+</html>

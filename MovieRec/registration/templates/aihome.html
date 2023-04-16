@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Movie Suggestions</title>
+    {% load static %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="{% static 'js/script.js' %}"></script>
+    {% include 'navbar.html' %}
+
+
+</head>
+<body>
+
+    <h1>Movie Suggestions</h1>
+    <form id="movie-form" method="post" action="{% url 'suggest' %}">
+        {% csrf_token %}
+        <label for="movie-name">Enter A Similar Movie:</label>
+        <input type="text" id="movie-name" name="movie_name">
+        <label for="emotion-text">How do you feel:</label>
+        <input type="text" id="emotion-text" name="emotion_text">
+    
+        <div class="login-box">
+    
+            <a href="javascript:void(0);" id="submit-link">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              Submit
+            </a>
+        </div>
+    </form>
+    <a style="display: none;" href="{% url 'newsuggest' %}" id="new-suggest-link">New Suggestion</a>
+
+    <script>
+        document.getElementById('submit-link').addEventListener('click', function() {
+            document.getElementById('movie-form').submit();
+            document.getElementById('new-suggest-link').style.display = 'block';  
+        });
+
+
+    document.getElementById('submit-link').addEventListener('click', function() {
+        var movieName = document.getElementById('movie-name').value;
+        var emotionText = document.getElementById('emotion-text').value;
+        
+        if (movieName.length < 3 || emotionText.length < 5) {
+            alert('Movie name and emotion text should be at least 5 characters long');
+        } else {
+            document.getElementById('movie-form').submit();
+            document.getElementById('new-suggest-link').style.display = 'block';
+        }
+    });
+    </script>
+    
+    <div id="movie-images-container">
+        {% for suggestion in movie_suggestions %}
+            <div class="card" style="background-image: url('{{ suggestion.movie_image }}')">
+                <h2 class="movie-title">{{ suggestion.movie_title }}</h2>
+                <!-- {% for i in '0123456789'|make_list %}
+                <span class="dot" style="height: 25px; width: 25px; background-color: #f3b20e; border-radius: 50%; display: inline-block; box-shadow: 0 0 1px #f3b20e, 0 0 1px #f3b20e, 0 0 1px #f3b20e, 0 0 15px #f3b20e;"></span>
+                {% endfor %} -->
+            
+            </div>
+        {% endfor %}
+    </div>
+    
+    
+    
+    <!-- <a href="{% url 'logout' %}" class="btn btn-primary">Logout</a> -->
+
+    
+</body>
+</html>

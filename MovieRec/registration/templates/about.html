@@ -1,0 +1,23 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/style_about.css' %}">
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+{% include 'navbar.html' %}
+{% block content %}
+    <div class="container about-page">
+        {% csrf_token %}
+
+        <h1 class="title">About MovieRec</h1>
+        <p class="description">MovieRec is a cutting-edge movie recommendation platform that utilizes artificial intelligence and data analysis to provide personalized movie recommendations to users. Our mission is to help movie enthusiasts discover new movies and create their watchlist based on their interests and preferences.</p>
+        <p class="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque suscipit elit vel aliquet. Nullam condimentum tincidunt lacus, id vestibulum eros vestibulum vel. Donec fermentum velit in lectus fermentum, vel luctus nunc ullamcorper. Nam facilisis massa eget mauris consequat auctor. Cras consectetur bibendum ullamcorper. Nunc id odio vel libero euismod fringilla. Morbi ultrices, nisl nec vestibulum ultricies, arcu lectus feugiat eros, vitae hendrerit magna sapien ac neque. Sed tristique tincidunt neque vitae dapibus. Vestibulum in ipsum et mauris venenatis feugiat. Vivamus a turpis ut justo gravida faucibus. Fusce et lacus enim. Nam elementum erat sit amet nisl feugiat euismod.</p>
+
+        <h2>Contact Us</h2>
+        <p class="description">If you have any questions or feedback, please feel free to contact us through the following channels:</p>
+        <div class="social-icons">
+            <a href="#" class="fab fa-twitter"></a>
+            <a href="#" class="fab fa-facebook"></a>
+            <a href="#" class="fab fa-instagram"></a>
+            <a href="#" class="fab fa-youtube"></a>
+        </div>
+    </div>
+{% endblock %}
