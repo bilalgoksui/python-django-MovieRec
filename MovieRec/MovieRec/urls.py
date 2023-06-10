@@ -24,6 +24,8 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls), 
     path('', views.HomePage,name='aihome'),
+    
+    path('hub/', views.hub,name='hub'),
 
     path('home/', views.HomePage,name='aihome'),
     path('login/', views.LoginPage,name='login'),
@@ -46,5 +48,8 @@ urlpatterns = [
     path('watchlist/', views.watchlist_list, name='watchlist'),
     path('update_watched_status/<int:item_id>/', views.update_watched_status, name='update_watched_status'),
     path('delete_item/<int:item_id>/', views.delete_item, name='delete_item'),
-   
+
+    path('profile/', views.profile, name='profile'),
+
+
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

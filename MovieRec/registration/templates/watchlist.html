@@ -2,6 +2,12 @@
 <html>
 <head>
     <title>Watchlist</title>
+        {% load static %}
+
+        <link rel="stylesheet" href="{% static 'css/style_favorites.css' %}">
+        <script src="{% static 'js/script.js' %}"></script>
+        {% include 'navbar.html' %}
+
     <style>
         /* Add some basic styling */
         table {
@@ -17,7 +23,7 @@
 {% csrf_token %} 
 <body>
     <h1>Watchlist</h1>
-    <table>
+    <table  class="container">
         <thead>
             <tr>
                 <th>Movie Name</th>

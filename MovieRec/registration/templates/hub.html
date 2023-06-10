@@ -7,7 +7,7 @@
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <script src="{% static 'js/script.js' %}"></script>
-    {% include 'navbar.html' %}
+    {% include 'navbar_guest.html' %}
 
     <style>
         .watchlist-button {
@@ -40,7 +40,7 @@
 <body>
 
     <h1>Movie Suggestions</h1>
-    <form id="movie-form" method="post" action="{% url 'suggest' %}">
+    <form id="movie-form" method="post" action="{% url 'hub' %}">
         {% csrf_token %}
         <label for="movie-name">Enter A Similar Movie:</label>
         <input type="text" id="movie-name" name="movie_name">
@@ -58,7 +58,6 @@
             </a>
         </div>
     </form>
-    <a style="display: none;" href="{% url 'newsuggest' %}" id="new-suggest-link">New Suggestion</a>
     <a href="{% url 'supriseme' %}" id="supriseme-link">Suprise me</a>
 
 
@@ -73,67 +72,10 @@
                 alert('Movie name and emotion text should be at least 5 characters long');
             } else {
                 document.getElementById('movie-form').submit();
-                document.getElementById('new-suggest-link').style.display = 'block';
             }
         });
         
     </script>
-    
-    <div id="movie-images-container">
-        {% for suggestion in movie_suggestions %}
-            <div class="card" style="background-image: url('{{ suggestion.movie_image }}')">
-                <h2 class="movie-title">{{ suggestion.movie_title }}</h2>
-                <div class="button-container">
-                    <a href="#" class="watchlist-button" onclick="addToWatchlist('{{ suggestion.movie_title }}')">Watchlist</a>
-                </div>
-            </div>
-        {% endfor %}
-    </div>
-    
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
-        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-<script>
-    function addToWatchlist(movieTitle) {
-        var csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
-
-        var data = {
-            movie_title: movieTitle,
-            csrfmiddlewaretoken: csrfToken
-        };
-
-        var url = "{% url 'add_to_watchlist' mname='__movie_title__' %}";
-        url = url.replace('__movie_title__', movieTitle);
-
-        var buttonElement = event.target; 
-
-        jQuery.ajax({
-            url: url,
-            type: "POST",
-            data: data,
-            success: function(response) {
-                if (response.status === 'success') {
-                    buttonElement.innerText = 'Added to Watchlist';
-                    buttonElement.classList.add('added-to-watchlist');
-                } else {
-                    alert('Failed to add movie to watchlist');
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error(error);
-            }
-        });
-    }
-</script>
-
-    
-    
-    
-
-    
-    
-    
-    <!-- <a href="{% url 'logout' %}" class="btn btn-primary">Logout</a> -->
-
     
 </body>
 </html>

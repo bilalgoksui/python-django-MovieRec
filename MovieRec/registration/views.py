@@ -231,3 +231,18 @@ def delete_item(request, item_id):
         return JsonResponse({'status': 'success', 'message': 'Item deleted'})
     except WatchList.DoesNotExist:
         return JsonResponse({'status': 'error', 'message': 'Watchlist item not found'})
+    
+
+
+@login_required
+def profile(request):
+    user = request.user
+    
+    return render(request, 'profile.html', {'user': user})
+
+
+
+def hub(request):
+    
+    return render (request,'hub.html')
+
