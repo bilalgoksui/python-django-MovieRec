@@ -33,7 +33,18 @@ urlpatterns = [
     path('contact/', views.ContactPage,name='contact'),
     path('suggest/', views.get_movie_suggestion,name='suggest'),
     path('suggestnew/', views.get_new_suggestion,name='newsuggest'),
+    path('supriseme/', views.suprise_me,name='supriseme'),
+
+    path('favorites/', views.favorites, name='favorites'),
+
+    path('save_comment/', views.save_comment, name='save_comment'),
+    path('favorites/delete/<int:film_id>/', views.delete_favorite, name='delete_favorite'),
+    path('favorites/update/<int:film_id>/', views.update_favorite, name='update_favorite'),
 
 
-
+    path('add_to_watchlist/<str:mname>/', views.add_to_watchlist, name='add_to_watchlist'),
+    path('watchlist/', views.watchlist_list, name='watchlist_list'),
+    # path('watchlist/create/', views.watchlist_create, name='watchlist_create'),
+    # path('watchlist/edit/<int:pk>/', views.watchlist_edit, name='watchlist_edit'),
+    # path('watchlist/delete/<int:pk>/', views.watchlist_delete, name='watchlist_delete'),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

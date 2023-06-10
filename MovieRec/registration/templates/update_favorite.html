@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Update Favorite</title>
+  <!-- Stil dosyaları ve diğer bağımlılıklar -->
+</head>
+<body>
+  <h3>Update Favorite</h3>
+  <form action="" method="post">
+    {% csrf_token %}
+    <label for="movie_name">Movie Name</label>
+    <input type="text" placeholder="Movie Name" name="movie_name" id="movie_name" value="{{ film.movie_name }}">
+
+    <label for="comment">Comment</label>
+    <input type="text" placeholder="Comment" name="comment" id="comment" value="{{ film.comment }}">
+
+    <label for="rate">Rate</label>
+    <input type="number" placeholder="Rate" name="rate" id="rate" value="{{ film.rate }}">
+
+    <button type="submit">Save</button>
+    <a href="{% url 'delete_favorite' film.id %}">Delete</a>
+
+  </form>
+</body>
+</html>

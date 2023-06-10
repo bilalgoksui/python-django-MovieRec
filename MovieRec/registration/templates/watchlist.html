@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Watchlist</title>
+</head>
+<body>
+    <h1>Watchlist</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Movie Name</th>
+                <th>Is Watched</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in watchlist_items %}
+            <tr>
+                <td>{{ item.user }}</td>
+                <td>{{ item.movie_name }}</td>
+                <td>{{ item.is_watched }}</td>
+                <td>
+                    {% comment %} <a href="{% url 'watchlist_edit' item.pk %}">Edit</a>
+                    <a href="{% url 'watchlist_delete' item.pk %}">Delete</a> {% endcomment %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% comment %} <a href="{% url 'watchlist_create' %}">Add New Item</a> {% endcomment %}
+</body>
+</html>

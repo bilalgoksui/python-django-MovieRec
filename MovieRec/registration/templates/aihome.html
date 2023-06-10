@@ -9,7 +9,26 @@
     <script src="{% static 'js/script.js' %}"></script>
     {% include 'navbar.html' %}
 
-
+    <style>
+        .watchlist-button {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: yellow;
+            color: black;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        .watchlist-button:hover {
+            background-color: orange;
+            color: white;
+        }
+        
+    </style>
 </head>
 <body>
 
@@ -33,38 +52,54 @@
         </div>
     </form>
     <a style="display: none;" href="{% url 'newsuggest' %}" id="new-suggest-link">New Suggestion</a>
+    <a href="{% url 'supriseme' %}" id="supriseme-link">Suprise me</a>
+
 
     <script>
-        document.getElementById('submit-link').addEventListener('click', function() {
+        {% comment %} document.getElementById('submit-link').addEventListener('click', function() {
             document.getElementById('movie-form').submit();
             document.getElementById('new-suggest-link').style.display = 'block';  
-        });
+        }); {% endcomment %}
 
 
-    document.getElementById('submit-link').addEventListener('click', function() {
-        var movieName = document.getElementById('movie-name').value;
-        var emotionText = document.getElementById('emotion-text').value;
+        document.getElementById('submit-link').addEventListener('click', function(event) {
+            event.preventDefault();  // Formun otomatik gönderilmesini durdur
         
-        if (movieName.length < 3 || emotionText.length < 5) {
-            alert('Movie name and emotion text should be at least 5 characters long');
-        } else {
-            document.getElementById('movie-form').submit();
-            document.getElementById('new-suggest-link').style.display = 'block';
-        }
-    });
+            var movieName = document.getElementById('movie-name').value;
+            var emotionText = document.getElementById('emotion-text').value;
+        
+            if (movieName.length < 3 || emotionText.length < 5) {
+                alert('Movie name and emotion text should be at least 5 characters long');
+            } else {
+                document.getElementById('movie-form').submit();
+                document.getElementById('new-suggest-link').style.display = 'block';
+            }
+        });
+        
     </script>
     
     <div id="movie-images-container">
         {% for suggestion in movie_suggestions %}
             <div class="card" style="background-image: url('{{ suggestion.movie_image }}')">
                 <h2 class="movie-title">{{ suggestion.movie_title }}</h2>
-                <!-- {% for i in '0123456789'|make_list %}
-                <span class="dot" style="height: 25px; width: 25px; background-color: #f3b20e; border-radius: 50%; display: inline-block; box-shadow: 0 0 1px #f3b20e, 0 0 1px #f3b20e, 0 0 1px #f3b20e, 0 0 15px #f3b20e;"></span>
-                {% endfor %} -->
-            
+                <div class="button-container">
+                    <a href="{% url 'add_to_watchlist' suggestion.movie_title %}" class="watchlist-button">Watchlist</a>
+                </div>
             </div>
         {% endfor %}
     </div>
+    
+
+<script>
+    function addToWatchlist(movieId) {
+        var button = document.getElementById(movieId);
+        button.style.backgroundColor = "yellow";
+        // Diğer watchlist işlemlerini buraya ekleyebilirsiniz
+        // Örneğin, AJAX isteği ile sunucuya watchlist'e ekleme işlemi yapılabilir
+        // veya watchlist'e ekleme API'sı çağrılabilir
+    }
+</script>
+
     
     
     
