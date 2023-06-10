@@ -2,17 +2,14 @@
 <html lang="en">
 <head>
   <title>Favorites</title>
-  {% load static %}
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
-  <style media="screen">
-    {% load static %}
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet"> 
+  {% load static %}
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <script src="{% static 'js/script.js' %}"></script>
-    {% include 'navbar.html' %}
-  </style>
+  <link rel="stylesheet" href="{% static 'css/style_favorites.css' %}">
+  <script src="{% static 'js/script.js' %}"></script>
+  {% include 'navbar.html' %}
 </head>
 <body>
   <div class="background">
@@ -26,27 +23,47 @@
       {% csrf_token %}
       <h3>Add a Comment</h3>
       <label for="movie_name">Movie Name</label>
-      <input type="text" placeholder="Movie Name" name="movie_name" id="movie_name">
+      <input type="text" placeholder="Movie Name" name="movie_name" id="movie_name" required>
 
       <label for="comment">Comment</label>
-      <input type="text" placeholder="Comment" name="comment" id="comment">
+      <input type="text" placeholder="Comment" name="comment" id="comment" required>
 
       <label for="rate">Rate</label>
-      <input type="number" placeholder="Rate" name="rate" id="rate">
+      <input type="number" placeholder="Rate" name="rate" id="rate" required>
 
       <button type="submit">Save</button>
       <button type="button" onclick="closeForm()">Close</button>
     </form>
   </div>
   <h3>Your Favorite Films</h3>
-  <ul>
+  <table class="container">
+    <thead>
+      <tr>
+        <th>No.</th>
+        <th>Film</th>
+        <th>Yorum</th>
+        <th>Puan</th>
+        <th>Güncelle</th>
+        <th>Sil</th>
+      </tr>
+    </thead>
+    <tbody>
     {% for film in films %}
-      <li>{{ film.movie_name }} - {{ film.comment }} - {{ film.rate }}</li>
-      <a href="{% url 'update_favorite' film.id %}">Update</a>
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ film.movie_name }}</td>
+        <td>{{ film.comment }}</td>
+        <td>{{ film.rate }}</td>
+        <td><a href="{% url 'update_favorite' film.id %}">Update</a></td>
+        <td><a href="{% url 'delete_favorite' film.id %}">Delete</a></td>
+      </tr>
     {% empty %}
-      <li>No favorite films yet.</li>
+      <tr>
+        <td colspan="6">No favorite films yet.</td>
+      </tr>
     {% endfor %}
-  </ul>
+    </tbody>
+  </table>
   <script>
     function openForm() {
       document.getElementById("commentForm").style.display = "block";

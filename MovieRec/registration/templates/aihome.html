@@ -27,7 +27,15 @@
             background-color: orange;
             color: white;
         }
-        
+        .watchlist-button.added-to-watchlist {
+            background-color: green;
+        }
+        .watchlist-button.added-to-watchlist::after {
+            {% comment %} content: "Added to Watchlist"; {% endcomment %}
+            display: inline-block;
+            margin-left: 5px;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -56,12 +64,6 @@
 
 
     <script>
-        {% comment %} document.getElementById('submit-link').addEventListener('click', function() {
-            document.getElementById('movie-form').submit();
-            document.getElementById('new-suggest-link').style.display = 'block';  
-        }); {% endcomment %}
-
-
         document.getElementById('submit-link').addEventListener('click', function(event) {
             event.preventDefault();  // Formun otomatik gönderilmesini durdur
         
@@ -83,22 +85,50 @@
             <div class="card" style="background-image: url('{{ suggestion.movie_image }}')">
                 <h2 class="movie-title">{{ suggestion.movie_title }}</h2>
                 <div class="button-container">
-                    <a href="{% url 'add_to_watchlist' suggestion.movie_title %}" class="watchlist-button">Watchlist</a>
+                    <a href="#" class="watchlist-button" onclick="addToWatchlist('{{ suggestion.movie_title }}')">Watchlist</a>
                 </div>
             </div>
         {% endfor %}
     </div>
     
-
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <script>
-    function addToWatchlist(movieId) {
-        var button = document.getElementById(movieId);
-        button.style.backgroundColor = "yellow";
-        // Diğer watchlist işlemlerini buraya ekleyebilirsiniz
-        // Örneğin, AJAX isteği ile sunucuya watchlist'e ekleme işlemi yapılabilir
-        // veya watchlist'e ekleme API'sı çağrılabilir
+    function addToWatchlist(movieTitle) {
+        var csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+        var data = {
+            movie_title: movieTitle,
+            csrfmiddlewaretoken: csrfToken
+        };
+
+        var url = "{% url 'add_to_watchlist' mname='__movie_title__' %}";
+        url = url.replace('__movie_title__', movieTitle);
+
+        var buttonElement = event.target; // Get the clicked button element
+
+        jQuery.ajax({
+            url: url,
+            type: "POST",
+            data: data,
+            success: function(response) {
+                if (response.status === 'success') {
+                    buttonElement.innerText = 'Added to Watchlist';
+                    buttonElement.classList.add('added-to-watchlist');
+                } else {
+                    alert('Failed to add movie to watchlist');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
     }
 </script>
+
+    
+    
+    
 
     
     

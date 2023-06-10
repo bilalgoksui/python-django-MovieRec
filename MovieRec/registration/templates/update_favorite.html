@@ -2,20 +2,26 @@
 <html lang="en">
 <head>
   <title>Update Favorite</title>
-  <!-- Stil dosyaları ve diğer bağımlılıklar -->
-</head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet"> 
+  {% load static %}
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <link rel="stylesheet" href="{% static 'css/style_favorites.css' %}">
+  <script src="{% static 'js/script.js' %}"></script>
+  {% include 'navbar.html' %}</head>
 <body>
   <h3>Update Favorite</h3>
   <form action="" method="post">
     {% csrf_token %}
     <label for="movie_name">Movie Name</label>
-    <input type="text" placeholder="Movie Name" name="movie_name" id="movie_name" value="{{ film.movie_name }}">
+    <input type="text" placeholder="Movie Name" name="movie_name" id="movie_name" value="{{ film.movie_name }} " required>
 
     <label for="comment">Comment</label>
-    <input type="text" placeholder="Comment" name="comment" id="comment" value="{{ film.comment }}">
+    <input type="text" placeholder="Comment" name="comment" id="comment" value="{{ film.comment }}" required>
 
     <label for="rate">Rate</label>
-    <input type="number" placeholder="Rate" name="rate" id="rate" value="{{ film.rate }}">
+    <input type="number" placeholder="Rate" name="rate" id="rate" value="{{ film.rate }}" required>
 
     <button type="submit">Save</button>
     <a href="{% url 'delete_favorite' film.id %}">Delete</a>

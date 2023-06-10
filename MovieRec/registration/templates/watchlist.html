@@ -2,13 +2,24 @@
 <html>
 <head>
     <title>Watchlist</title>
+    <style>
+        /* Add some basic styling */
+        table {
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            border: 1px solid black;
+            padding: 5px;
+        }
+    </style>
 </head>
+{% csrf_token %} 
 <body>
     <h1>Watchlist</h1>
     <table>
         <thead>
             <tr>
-                <th>User</th>
                 <th>Movie Name</th>
                 <th>Is Watched</th>
                 <th>Actions</th>
@@ -17,17 +28,82 @@
         <tbody>
             {% for item in watchlist_items %}
             <tr>
-                <td>{{ item.user }}</td>
                 <td>{{ item.movie_name }}</td>
-                <td>{{ item.is_watched }}</td>
                 <td>
-                    {% comment %} <a href="{% url 'watchlist_edit' item.pk %}">Edit</a>
-                    <a href="{% url 'watchlist_delete' item.pk %}">Delete</a> {% endcomment %}
+                    <input type="checkbox" id="is_watched_checkbox_{{ forloop.counter }}" name="is_watched_checkbox" {% if item.is_watched %}checked{% endif %} onchange="toggleWatched(this, '{{ item.id }}')">
+                </td>
+                <td>
+                    <button onclick="deleteItem('{{ item.id }}')">Delete</button>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    
     {% comment %} <a href="{% url 'watchlist_create' %}">Add New Item</a> {% endcomment %}
+
+    <script>
+        // Get the CSRF token value from the cookie
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Extract the CSRF token value
+                    if (cookie.startsWith(name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    
+        // Function to toggle the watched status of an item
+        function toggleWatched(checkbox, itemId) {
+            var isChecked = checkbox.checked;
+    
+            // Get the CSRF token
+            var csrftoken = getCookie('csrftoken');
+    
+            // Make an AJAX request to update the watched status on the server
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/update_watched_status/' + itemId + '/');
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('X-CSRFToken', csrftoken);  // Set the CSRF token in the request header
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    console.log('Watched status updated successfully');
+                } else {
+                    console.log('Failed to update watched status');
+                }
+            };
+            xhr.send(JSON.stringify({ watched: isChecked }));
+        }
+    
+        // Function to delete an item
+        function deleteItem(itemId) {
+            // Get the CSRF token
+            var csrftoken = getCookie('csrftoken');
+    
+            // Make an AJAX request to delete the item from the server
+            var xhr = new XMLHttpRequest();
+            xhr.open('DELETE', '/delete_item/' + itemId + '/');
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('X-CSRFToken', csrftoken);  // Set the CSRF token in the request header
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    console.log('Item deleted successfully');
+                    // Reload the page after deletion
+                    location.reload();
+                } else {
+                    console.log('Failed to delete item');
+                }
+            };
+            xhr.send();
+        }
+    </script>
+    
 </body>
 </html>

@@ -43,8 +43,8 @@ urlpatterns = [
 
 
     path('add_to_watchlist/<str:mname>/', views.add_to_watchlist, name='add_to_watchlist'),
-    path('watchlist/', views.watchlist_list, name='watchlist_list'),
-    # path('watchlist/create/', views.watchlist_create, name='watchlist_create'),
-    # path('watchlist/edit/<int:pk>/', views.watchlist_edit, name='watchlist_edit'),
-    # path('watchlist/delete/<int:pk>/', views.watchlist_delete, name='watchlist_delete'),
+    path('watchlist/', views.watchlist_list, name='watchlist'),
+    path('update_watched_status/<int:item_id>/', views.update_watched_status, name='update_watched_status'),
+    path('delete_item/<int:item_id>/', views.delete_item, name='delete_item'),
+   
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

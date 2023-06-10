@@ -1,36 +1,46 @@
+from gc import get_objects
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate , login , logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.sessions.backends.db import SessionStore
+from django.contrib import messages
 import requests
 import json
-from django.http import JsonResponse
+from django.http import JsonResponse ,HttpResponse
 import json
-from .models import Film  
+from .models import Film  ,WatchList
+from django.db.models import Q
+import re
+
 @login_required(login_url='login')
 def HomePage(request):
     return render (request,'aihome.html')
 
-
 def SignupPage(request):
-    if request.method=='POST':
-        user_name=request.POST.get('username')
-        email=request.POST.get('email')
-        password1=request.POST.get('password1')
-        password2=request.POST.get('password2')
+    if request.method == 'POST':
+        user_name = request.POST.get('username')
+        user_email = request.POST.get('email')
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
 
-        if password1!=password2:
-            return HttpResponse("Your Password and Conform password are not same")
-        
+        if password1 != password2:
+            messages.error(request, 'Your Password and Confirm password do not match')
+        elif User.objects.filter(Q(username=user_name) | Q(email=user_email)).exists():
+            messages.error(request, 'Username or email already exists')
+        elif len(user_name) < 5:
+            messages.error(request, 'Username should be at least 5 characters long')
+        elif len(password1) < 8:
+            messages.error(request, 'Password should be at least 8 characters long')
+        elif not re.match(r'^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$', password1):
+             messages.error(request, 'Password must be 8+ characters with at least one uppercase, one lowercase, and one digit')
+
         else:
-            user = User.objects.create_user(user_name,email,password1)
+            user = User.objects.create_user(username=user_name, email=user_email, password=password1)
             user.save()
             return redirect('login')
 
-
-
-    return render (request,'signup.html')
+    return render(request, 'signup.html')
 
 def LoginPage(request):
     if request.method =='POST':
@@ -44,7 +54,7 @@ def LoginPage(request):
             return redirect('aihome')       
         
         else:
-            return HttpResponse(" INVALID USERNAME OR PASSWORD")
+            messages.info(request, 'Username or password is incorrect')
 
 
     return render (request,'login.html')
@@ -63,32 +73,35 @@ def ContactPage(request):
 
 @login_required(login_url='login')
 def get_movie_suggestion(request):
-  
-    movie_name =request.POST.get('movie_name')
-    emotion_text = request.POST.get('emotion_text')       
-  
-    movie_data = {
-        "movie_name": movie_name,
-        "emotion_text": emotion_text,
-        "re_suggest":0,
-        "supriseme":0
-    }
-    json_data = json.dumps(movie_data)
+    try:
+        movie_name =request.POST.get('movie_name')
+        emotion_text = request.POST.get('emotion_text')       
     
-    request.session["movie_name"]= movie_name
-    request.session["emotion_text"]= emotion_text
+        movie_data = {
+            "movie_name": movie_name,
+            "emotion_text": emotion_text,
+            "re_suggest":0,
+            "supriseme":0
+        }
+        json_data = json.dumps(movie_data)
+        
+        request.session["movie_name"]= movie_name
+        request.session["emotion_text"]= emotion_text
 
 
-    api_url = "http://127.0.0.1:5655/suggest"  
-    response = requests.post(api_url, data=json_data, headers={'Content-Type': 'application/json'})
-    response.raise_for_status()  
+        api_url = "http://127.0.0.1:5655/suggest"  
+        response = requests.post(api_url, data=json_data, headers={'Content-Type': 'application/json'})
+        response.raise_for_status()  
+        
+        movie_suggestions = response.json()
+
+        return render(request, 'aihome.html', {'movie_suggestions': movie_suggestions})
     
-    movie_suggestions = response.json()
+    except requests.exceptions.RequestException:
+        return HttpResponse('Service is currently unavailable')
 
-    return render(request, 'aihome.html', {'movie_suggestions': movie_suggestions})
-
+@login_required(login_url='login')
 def get_new_suggestion(request):
-
 
     movie_name = request.session.get('movie_name')
     emotion_text = request.session.get('emotion_text')
@@ -111,29 +124,36 @@ def get_new_suggestion(request):
 
     return render(request, 'aihome.html', {'movie_suggestions': movie_suggestions})
 
+
+@login_required(login_url='login')
 def suprise_me(request):
+    try:
+        movie_data = {
+            "movie_name": "movie_name",
+            "emotion_text": "emotion_text",
+            "re_suggest": "1",
+            "supriseme": 1
+        }
+        json_data = json.dumps(movie_data)
 
-    movie_data = {
-        "movie_name": "movie_name",
-        "emotion_text": "emotion_text",
-        "re_suggest":"1",
-        "supriseme":1
+        api_url = "http://127.0.0.1:5655/suggest"
+        response = requests.post(api_url, data=json_data, headers={'Content-Type': 'application/json'})
+        response.raise_for_status()
 
-    }
-    json_data = json.dumps(movie_data)
+        movie_suggestions = response.json()
 
-    api_url = "http://127.0.0.1:5655/suggest"  
-    response = requests.post(api_url, data=json_data, headers={'Content-Type': 'application/json'})
-    response.raise_for_status()  
-    
-    movie_suggestions = response.json()
+        return render(request, 'aihome.html', {'movie_suggestions': movie_suggestions})
 
-    return render(request, 'aihome.html', {'movie_suggestions': movie_suggestions})
+    except requests.exceptions.RequestException:
+        return HttpResponse('Service is currently unavailable')
 
+
+@login_required(login_url='login')
 def favorites(request):
     films = Film.objects.filter(user=request.user)
     return render(request, 'favorites.html', {'films': films})
 
+@login_required(login_url='login')
 def save_comment(request):
     if request.method == 'POST':
         movie_name = request.POST.get('movie_name')
@@ -149,22 +169,24 @@ def save_comment(request):
 
     return redirect('favorites')
 
-
-
+@login_required(login_url='login')
 def delete_favorite(request, film_id):
-    film = get_object_or_404(Film, id=film_id, user=request.user)
-    if film.user != request.user:
+    try:
+        film = Film.objects.get(id=film_id, user=request.user)
+    except Film.DoesNotExist:
         return redirect('favorites')
 
 
     film.delete()
     return redirect('favorites')
 
+@login_required(login_url='login')
 def update_favorite(request, film_id):
-    film = get_object_or_404(Film, id=film_id, user=request.user)
-    if film.user != request.user:
+    try:
+        film = Film.objects.get(id=film_id, user=request.user)
+    except Film.DoesNotExist:
         return redirect('favorites')
-    
+        
     if request.method == 'POST':
         film.movie_name = request.POST.get('movie_name')
         film.comment = request.POST.get('comment')
@@ -174,12 +196,7 @@ def update_favorite(request, film_id):
 
     return render(request, 'update_favorite.html', {'film': film})
 
-
-from .models import WatchList
-
-from django.http import JsonResponse
-from .models import WatchList
-
+@login_required(login_url='login')
 def add_to_watchlist(request, mname):
     # İstediğiniz koşullara göre kullanıcı doğrulaması yapabilirsiniz
     if not request.user.is_authenticated:
@@ -191,36 +208,26 @@ def add_to_watchlist(request, mname):
 
     return JsonResponse({'status': 'success', 'message': 'Movie added to watchlist'})
 
-
-
+@login_required(login_url='login')
 def watchlist_list(request):
-    watchlist_items = WatchList.objects.all()
+    watchlist_items = WatchList.objects.filter(user=request.user)
     return render(request, 'watchlist.html', {'watchlist_items': watchlist_items})
 
-# def watchlist_create(request):
-#     if request.method == 'POST':
-#         form = WatchListForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('watchlist_list')
-#     else:
-#         form = WatchListForm()
-#     return render(request, 'watchlist_form.html', {'form': form})
+@login_required(login_url='login')
+def update_watched_status(request, item_id):
+    try:
+        watchlist_item = WatchList.objects.get(id=item_id)
+        watchlist_item.is_watched = not watchlist_item.is_watched
+        watchlist_item.save()
+        return JsonResponse({'status': 'success', 'message': 'Watched status updated'})
+    except WatchList.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Watchlist item not found'})
 
-# def watchlist_edit(request, pk):
-#     item = get_object_or_404(WatchList, pk=pk)
-#     if request.method == 'POST':
-#         form = WatchListForm(request.POST, instance=item)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('watchlist_list')
-#     else:
-#         form = WatchListForm(instance=item)
-#     return render(request, 'watchlist_form.html', {'form': form})
-
-# def watchlist_delete(request, pk):
-#     item = get_object_or_404(WatchList, pk=pk)
-#     if request.method == 'POST':
-#         item.delete()
-#         return redirect('watchlist_list')
-#     return render(request, 'watchlist_confirm_delete.html', {'item': item})
+@login_required(login_url='login')
+def delete_item(request, item_id):
+    try:
+        watchlist_item = WatchList.objects.get(id=item_id)
+        watchlist_item.delete()
+        return JsonResponse({'status': 'success', 'message': 'Item deleted'})
+    except WatchList.DoesNotExist:
+        return JsonResponse({'status': 'error', 'message': 'Watchlist item not found'})
