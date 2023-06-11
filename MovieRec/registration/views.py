@@ -12,6 +12,7 @@ import json
 from .models import Film  ,WatchList
 from django.db.models import Q
 import re
+from django.contrib.auth.hashers import make_password, check_password
 
 @login_required(login_url='login')
 def HomePage(request):
@@ -37,6 +38,7 @@ def SignupPage(request):
 
         else:
             user = User.objects.create_user(username=user_name, email=user_email, password=password1)
+            
             user.save()
             return redirect('login')
 
@@ -232,17 +234,88 @@ def delete_item(request, item_id):
     except WatchList.DoesNotExist:
         return JsonResponse({'status': 'error', 'message': 'Watchlist item not found'})
     
-
-
 @login_required
 def profile(request):
+    if request.method == 'POST':
+        username_ = request.POST.get('username')
+        email_ = request.POST.get('email')
+        user = request.user
+
+        # Update user object with new data
+        user.username = username_
+        user.email = email_
+        user.save()
+
     user = request.user
-    
     return render(request, 'profile.html', {'user': user})
 
+def delete_profile(request):
+    if request.method == 'POST':
+        username_ = request.POST.get('username')
+        email_ = request.POST.get('email')
+        user = request.user
 
+        # Update user object with new data
+        user.username = username_
+        user.email = email_
+        user.save()
 
+    return redirect('profile')
+
+    
+@login_required(login_url='login')
+def change_password(request):
+    if request.method == 'POST':
+        oldpassword = request.POST.get('oldpassword')
+        newpassword = request.POST.get('newpassword')
+        renewpassword = request.POST.get('renewpassword')
+
+        user = request.user  # Geçerli kullanıcıyı al
+
+        if check_password(oldpassword, user.password):  # Eski şifre eşleşiyor mu kontrol et
+            if newpassword == renewpassword:  # Yeni şifre ve yeniden girilen şifre eşleşiyor mu kontrol et
+                user.set_password(newpassword)  # Kullanıcının şifresini güncelle
+                user.save()
+                user = authenticate(request, username=request.user.username, password=newpassword)
+                login(request, user)
+                return redirect('profile')
+            else:
+                return HttpResponse('Yeni şifreler eşleşmiyor.')
+        else:
+            return HttpResponse('Eski şifre yanlış.')
+
+    return render(request, 'changepassword.html')
 def hub(request):
     
     return render (request,'hub.html')
 
+from django.shortcuts import render, redirect
+
+def forgot_password(request):
+    if request.method == 'POST':
+        email = request.POST.get("email")
+        if email:
+            print("Email Gönderildi: " + email)
+            # Şifre sıfırlama işlemleri yapılabilir
+            return redirect('login')
+    return render(request, 'forgotpassword.html')
+
+
+# from django.core.mail import BadHeaderError, send_mail
+# from django.http import HttpResponse, HttpResponseRedirect
+
+
+# def send_email(request):
+#     subject = request.POST.get("subject", "")
+#     message = request.POST.get("message", "")
+#     from_email = request.POST.get("from_email", "")
+#     if subject and message and from_email:
+#         try:
+#             send_mail(subject, message, from_email, ["admin@example.com"])
+#         except BadHeaderError:
+#             return HttpResponse("Invalid header found.")
+#         return HttpResponseRedirect("/contact/thanks/")
+#     else:
+#         # In reality we'd use a form class
+#         # to get proper validation errors.
+#         return HttpResponse("Make sure all fields are entered and valid.")

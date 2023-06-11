@@ -50,6 +50,9 @@ urlpatterns = [
     path('delete_item/<int:item_id>/', views.delete_item, name='delete_item'),
 
     path('profile/', views.profile, name='profile'),
+    # path('profile/update', views.update_profile, name='update_profile'),
+    path('profile/changepassword/', views.change_password, name='change_password'),
+    path('forgotpassword/', views.forgot_password, name='forgot_password'),
 
 
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

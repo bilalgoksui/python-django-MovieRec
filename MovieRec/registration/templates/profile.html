@@ -17,12 +17,15 @@
   <input type="email" id="email" name="email" value="{{ user.email }}" required>
   <label for="email">Activation pending:</label>
 
-  <label for="password">Şifre:</label>
-  <input type="password" id="password" name="password" required>
+  {% comment %} <label for="password">Şifre:</label>
+  <input type="password" id="password" name="password" required> {% endcomment %}
   
   <button type="submit">Kaydet</button>
 
-  <button type="submit">Change Password</button>
+  {% comment %} <a href="{% url 'update_profile'  %}">update</a> {% endcomment %}
+
+  <a href="{% url 'change_password' %}">Change Password</a>
+
   <button type="submit">Delete Account</button>
 
 </form>
