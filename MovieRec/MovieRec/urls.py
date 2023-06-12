@@ -20,6 +20,7 @@ from registration import views
 from django.urls import include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.utils.encoding import force_str
 
 urlpatterns = [
     path('admin/', admin.site.urls), 
@@ -34,7 +35,6 @@ urlpatterns = [
     path('about/', views.AboutPage,name='about'),
     path('contact/', views.ContactPage,name='contact'),
     path('suggest/', views.get_movie_suggestion,name='suggest'),
-    path('suggestnew/', views.get_new_suggestion,name='newsuggest'),
     path('supriseme/', views.suprise_me,name='supriseme'),
 
     path('favorites/', views.favorites, name='favorites'),
@@ -52,7 +52,12 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     # path('profile/update', views.update_profile, name='update_profile'),
     path('profile/changepassword/', views.change_password, name='change_password'),
-    path('forgotpassword/', views.forgot_password, name='forgot_password'),
 
+    # path('activateaccount/', views.activate_account, name='activate_account'),
+    path('activate/<str:token>/', views.activate_account, name='activate_account'),
+    
+    path('forgotpassword/', views.forgot_password, name='forgot_password'),
+    path('resetpassword/<str:user_id>/<str:token>/<str:user_email>/', views.reset_password, name='reset_password'),
+    # path('savefeedback', views.save_feedback, name='save_feedback'),
 
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

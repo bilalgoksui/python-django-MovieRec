@@ -1,18 +1,30 @@
-from gc import get_objects
-from django.shortcuts import render, redirect, get_object_or_404
+from lib2to3.pytree import generate_matches
+from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate , login , logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.sessions.backends.db import SessionStore
 from django.contrib import messages
 import requests
 import json
 from django.http import JsonResponse ,HttpResponse
-import json
-from .models import Film  ,WatchList
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.mail import send_mail
+from django.core.signing import Signer
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes ,force_str
+from .models import Film  ,WatchList , Feedback
 from django.db.models import Q
 import re
-from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.hashers import  check_password
+from django.core.signing import Signer, BadSignature, SignatureExpired
+from django.http import HttpResponseBadRequest
+from django.urls import reverse
+
+
+def hub(request):
+    
+    return render (request,'hub.html')
 
 @login_required(login_url='login')
 def HomePage(request):
@@ -34,32 +46,45 @@ def SignupPage(request):
         elif len(password1) < 8:
             messages.error(request, 'Password should be at least 8 characters long')
         elif not re.match(r'^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$', password1):
-             messages.error(request, 'Password must be 8+ characters with at least one uppercase, one lowercase, and one digit')
-
+            messages.error(request, 'Password must be 8+ characters with at least one uppercase, one lowercase, and one digit')
         else:
             user = User.objects.create_user(username=user_name, email=user_email, password=password1)
-            
+            user.is_active = False
             user.save()
+
+            # Doğrulama linki oluşturma
+            signer = Signer()
+            user_id = urlsafe_base64_encode(force_bytes(user.pk))
+            token = signer.sign(user_id)
+            current_site = get_current_site(request)
+            mail_subject = 'Activate your account'
+            mail_message = render_to_string('activation_email.html', {
+                'user': user,
+                'domain': current_site.domain,
+                'token': token,
+            })
+            send_mail(mail_subject, mail_message, 'settings.EMAIL_HOST_USER', [user_email], fail_silently=False)
+            
             return redirect('login')
 
     return render(request, 'signup.html')
 
 def LoginPage(request):
-    if request.method =='POST':
-        user_name=request.POST.get('username')
-        password=request.POST.get('pass')
+    if request.method == 'POST':
+        user_name = request.POST.get('username')
+        password = request.POST.get('pass')
 
-        user = authenticate(request,username=user_name,password=password)
-        if user is not None :
-
-            login(request,user)
-            return redirect('aihome')       
-        
+        user = authenticate(request, username=user_name, password=password, backend='django.contrib.auth.backends.ModelBackend')
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                return redirect('aihome')
+            else:
+                messages.info(request, 'Inactive account. Please check your email.')
         else:
             messages.info(request, 'Username or password is incorrect')
 
-
-    return render (request,'login.html')
+    return render(request, 'login.html')
 
 def LogoutPage(request):
     logout(request)
@@ -103,31 +128,6 @@ def get_movie_suggestion(request):
         return HttpResponse('Service is currently unavailable')
 
 @login_required(login_url='login')
-def get_new_suggestion(request):
-
-    movie_name = request.session.get('movie_name')
-    emotion_text = request.session.get('emotion_text')
-
-    movie_data = {
-        "movie_name": movie_name,
-        "emotion_text": emotion_text,
-        "re_suggest":1,
-        "supriseme":0
-
-
-    }
-    json_data = json.dumps(movie_data)
-
-    api_url = "http://127.0.0.1:5655/suggest"  
-    response = requests.post(api_url, data=json_data, headers={'Content-Type': 'application/json'})
-    response.raise_for_status()  
-    
-    movie_suggestions = response.json()
-
-    return render(request, 'aihome.html', {'movie_suggestions': movie_suggestions})
-
-
-@login_required(login_url='login')
 def suprise_me(request):
     try:
         movie_data = {
@@ -148,7 +148,6 @@ def suprise_me(request):
 
     except requests.exceptions.RequestException:
         return HttpResponse('Service is currently unavailable')
-
 
 @login_required(login_url='login')
 def favorites(request):
@@ -210,6 +209,39 @@ def add_to_watchlist(request, mname):
 
     return JsonResponse({'status': 'success', 'message': 'Movie added to watchlist'})
 
+
+# def save_feedback(request):
+#     if request.method == 'POST':
+#         liked = request.POST.get('liked')
+#         movie_title = request.POST.get('movie_title')
+#         imdb_id = request.POST.get('imdb_id')
+#         genres = request.POST.get('genres')
+#         genre_matches= request.POST.get('genre_matches')
+#         csrf_token = request.POST.get('csrfmiddlewaretoken')  # 'csrfmiddlewaretoken' parametresini al
+        
+#         print('movie_title:', movie_title)
+#         print('imdb_id:', imdb_id)
+#         print('genres:', genres)
+#         print('genre_matches:', genre_matches)
+        
+#         print('liked:', liked)
+#         print('csrf_token:', csrf_token)
+
+#         user = request.user
+#         smilar_movie = "DENEME"
+#         mood_text = "DENEME"
+#         movie_name = "DENEME"
+#         imdb_title = "DENEME"
+#         genres ="DENEME"
+#         genres_match = 1 
+#         feedback = True
+#         feedback = Feedback(user=user, smilar_movie=smilar_movie, mood_text=mood_text, genres=genres , genres_match=genres_match, movie_name=movie_name, feedback=feedback)
+#         feedback.save()
+
+#         return JsonResponse({'status': 'success', 'message': 'Feedback saved successfully'})
+#     else:
+#         return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+
 @login_required(login_url='login')
 def watchlist_list(request):
     watchlist_items = WatchList.objects.filter(user=request.user)
@@ -262,7 +294,6 @@ def delete_profile(request):
 
     return redirect('profile')
 
-    
 @login_required(login_url='login')
 def change_password(request):
     if request.method == 'POST':
@@ -285,37 +316,56 @@ def change_password(request):
             return HttpResponse('Eski şifre yanlış.')
 
     return render(request, 'changepassword.html')
-def hub(request):
+
+def activate_account(request, token):
+    signer = Signer()
+    try:
+        user_id = signer.unsign(token)
+        user_id = force_str(urlsafe_base64_decode(user_id))
+        user = User.objects.get(pk=user_id)
+        user.is_active = True
+        user.save()
+        return HttpResponse('Your account has been activated successfully.')
+    except (BadSignature, SignatureExpired, User.DoesNotExist):
+        return HttpResponseBadRequest('Invalid activation link.')
     
-    return render (request,'hub.html')
-
-from django.shortcuts import render, redirect
-
 def forgot_password(request):
     if request.method == 'POST':
-        email = request.POST.get("email")
-        if email:
-            print("Email Gönderildi: " + email)
-            # Şifre sıfırlama işlemleri yapılabilir
-            return redirect('login')
+        email_ = request.POST.get("email")
+        if email_:
+            signer = Signer()
+            user = User.objects.get(email=email_)
+            user_id = urlsafe_base64_encode(force_bytes(user.pk))
+            token = signer.sign(user_id)
+            current_site = get_current_site(request)
+            reset_url = reverse('reset_password', kwargs={'user_id': user_id, 'token': token, 'user_email': email_})
+            reset_url = request.build_absolute_uri(reset_url)
+            mail_subject = 'Reset your password'
+            mail_message = f"Click the following link to reset your password: {reset_url}"
+            send_mail(mail_subject, mail_message, 'settings.EMAIL_HOST_USER', [email_], fail_silently=False)
     return render(request, 'forgotpassword.html')
 
-
-# from django.core.mail import BadHeaderError, send_mail
-# from django.http import HttpResponse, HttpResponseRedirect
-
-
-# def send_email(request):
-#     subject = request.POST.get("subject", "")
-#     message = request.POST.get("message", "")
-#     from_email = request.POST.get("from_email", "")
-#     if subject and message and from_email:
-#         try:
-#             send_mail(subject, message, from_email, ["admin@example.com"])
-#         except BadHeaderError:
-#             return HttpResponse("Invalid header found.")
-#         return HttpResponseRedirect("/contact/thanks/")
-#     else:
-#         # In reality we'd use a form class
-#         # to get proper validation errors.
-#         return HttpResponse("Make sure all fields are entered and valid.")
+def reset_password(request, user_id, token, user_email):
+    try:
+        signer = Signer()
+        user_id = urlsafe_base64_decode(user_id)
+        token = signer.unsign(token)
+        user = User.objects.get(pk=user_id)
+        if user.email == user_email:
+            if request.method == 'POST':
+                new_password = request.POST.get("new_password")
+                confirm_password = request.POST.get("confirm_password")
+                if new_password == confirm_password:
+                    user.set_password(new_password)
+                    user.save()
+                    messages.success(request, 'Şifreniz başarıyla değiştirildi.')
+                    return redirect('login')  # Yönlendirilecek sayfa
+                else:
+                    messages.error(request, 'Yeni şifreler eşleşmiyor.')
+                    return redirect('reset_password', user_id=user_id, token=token, user_email=user_email)
+            return render(request, 'reset_password.html', {'user_id': user_id, 'token': token, 'user_email': user_email})
+    except (BadSignature, SignatureExpired, User.DoesNotExist):
+        messages.error(request, 'Geçersiz veya süresi dolmuş bir şifre sıfırlama talebi.')
+        return redirect('forgot_password')  # Yönlendirilecek sayfa
+    
+ 
