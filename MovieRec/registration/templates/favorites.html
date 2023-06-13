@@ -16,12 +16,14 @@
   <div class="background">
     <!-- ... -->
   </div>
+  <h3>Your Favorite Films</h3>
 
-  <button onclick="openForm()">Add a Comment</button>
+  <button class="comment" onclick="openForm()">Add a Comment</button>
 
   <div class="form-popup" id="commentForm">
     <form action="{% url 'save_comment' %}" method="post">
       {% csrf_token %}
+      
       <h3>Add a Comment</h3>
       <label for="movie_name">Movie Name</label>
       <input type="text" placeholder="Movie Name" name="movie_name" id="movie_name" required>
@@ -32,11 +34,10 @@
       <label for="rate">Rate</label>
       <input type="number" placeholder="Rate" name="rate" id="rate" required>
 
-      <button type="submit">Save</button>
-      <button type="button" onclick="closeForm()">Close</button>
+      <button class="comment" type="submit">Save</button>
+      <button class="comment"type="button" onclick="closeForm()">Close</button>
     </form>
   </div>
-  <h3>Your Favorite Films</h3>
   <table class="container">
     <thead>
       <tr>

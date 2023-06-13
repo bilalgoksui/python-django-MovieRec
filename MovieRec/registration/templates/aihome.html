@@ -85,50 +85,11 @@
                 <h2 class="movie-title">{{ suggestion.movie_title }}</h2>
                 <div class="button-container">
                     <a href="#" class="watchlist-button" onclick="addToWatchlist('{{ suggestion.movie_title }}')">Add Watchlist</a>
-                    {% comment %} <div id="feedback-container">
-                        <h3>Do you like it?</h3>
-                        <button onclick="sendFeedback(true, '{{ suggestion.movie_title }}','{{ suggestion.imdb_id }}','{{ suggestion.genres }}','{{ suggestion.genre_matches }}')">Yes</button>
-                        <button onclick="sendFeedback(false,'{{ suggestion.movie_title }}','{{ suggestion.imdb_id }}','{{ suggestion.genres }}','{{ suggestion.genre_matches }}')">No</button>
-
-                    </div> {% endcomment %}
                 </div>
             </div>
         {% endfor %}
     </div>
   
-
-    <script>
-        {% comment %} function sendFeedback(liked,movie_title,imdb_id,genres,genre_matches) {
-            var csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
-    
-            var data = {
-                genre_matches:genre_matches,
-                genres:genres,
-                movie_title:movie_title,
-                imdb_id:imdb_id,
-                liked: liked,
-                csrfmiddlewaretoken: csrfToken
-            };
-    
-            var url = "{% url 'save_feedback' %}";
-    
-            jQuery.ajax({
-                url: url,
-                type: "POST",
-                data: data,
-                success: function(response) {
-                    if (response.status === 'success') {
-                        alert('Feedback saved successfully!');
-                    } else {
-                        alert('Failed to save feedback');
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error(error);
-                }
-            });
-        }
-    </script> {% endcomment %}
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"
         integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <script>

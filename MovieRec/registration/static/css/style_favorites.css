@@ -1,118 +1,200 @@
-/*	
-	Table Responsive
-	===================
-	Author: https://github.com/pablorgarcia
- */
+@charset "UTF-8";
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,700);
 
- @charset "UTF-8";
- @import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,700);
- 
- body {
-   font-family: 'Open Sans', sans-serif;
-   font-weight: 300;
-   line-height: 1.42em;
-   color:#A7A1AE;
-   background-color:#1F2739;
- }
- 
- h1 {
-   font-size:3em; 
-   font-weight: 300;
-   line-height:1em;
-   text-align: center;
-   color: #4DC3FA;
- }
- 
- h2 {
-   font-size:1em; 
-   font-weight: 300;
-   text-align: center;
-   display: block;
-   line-height:1em;
-   padding-bottom: 2em;
-   color: #FB667A;
- }
- 
- h2 a {
-   font-weight: 700;
-   text-transform: uppercase;
-   color: #FB667A;
-   text-decoration: none;
- }
- 
- .blue { color: #185875; }
- .yellow { color: #FFF842; }
- 
- .container th h1 {
-       font-weight: bold;
-       font-size: 1em;
-   text-align: left;
-   color: #185875;
- }
- 
- .container td {
-       font-weight: normal;
-       font-size: 1em;
-   -webkit-box-shadow: 0 2px 2px -2px #0E1119;
-        -moz-box-shadow: 0 2px 2px -2px #0E1119;
-             box-shadow: 0 2px 2px -2px #0E1119;
- }
- 
- .container {
-       text-align: left;
-       overflow: hidden;
-       width: 80%;
-       margin: 0 auto;
-   display: table;
-   padding: 0 0 8em 0;
- }
- 
- .container td, .container th {
-       padding-bottom: 2%;
-       padding-top: 2%;
-   padding-left:2%;  
- }
- 
- /* Background-color of the odd rows */
- .container tr:nth-child(odd) {
-       background-color: #323C50;
- }
- 
- /* Background-color of the even rows */
- .container tr:nth-child(even) {
-       background-color: #2C3446;
- }
- 
- .container th {
-       background-color: #1F2739;
- }
- 
- .container td:first-child { color: #FB667A; }
- 
- .container tr:hover {
-    background-color: #464A52;
- -webkit-box-shadow: 0 6px 6px -6px #0E1119;
-        -moz-box-shadow: 0 6px 6px -6px #0E1119;
-             box-shadow: 0 6px 6px -6px #0E1119;
- }
- 
- .container td:hover {
-   background-color: #FFF842;
-   color: #403E10;
-   font-weight: bold;
-   
-   box-shadow: #7F7C21 -1px 1px, #7F7C21 -2px 2px, #7F7C21 -3px 3px, #7F7C21 -4px 4px, #7F7C21 -5px 5px, #7F7C21 -6px 6px;
-   transform: translate3d(6px, -6px, 0);
-   
-   transition-delay: 0s;
-       transition-duration: 0.4s;
-       transition-property: all;
-   transition-timing-function: line;
- }
- 
- @media (max-width: 800px) {
- .container td:nth-child(4),
- .container th:nth-child(4) { display: none; }
- }
+body {
+  font-family: 'Open Sans', sans-serif;
+   min-height: 100vh;
+    background: #c01c76;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    box-sizing: border-box;
+    background: radial-gradient(circle at 50% 100%,#000, #20113a)
 
- 
+}
+
+h1 {
+  font-size:3em; 
+  font-weight: 300;
+  line-height:1em;
+  text-align: center;
+  color: #4DC3FA;
+}
+
+h2 {
+  font-size:1em; 
+  font-weight: 300;
+  text-align: center;
+  display: block;
+  line-height:1em;
+  padding-bottom: 2em;
+  color: #03e9f4;
+}
+h3 {
+  font-size:1em; 
+  font-weight: bold;
+  text-align: center;
+  display: block;
+  line-height:1em;
+  padding-bottom: 2em;
+  color: #03e9f4;
+}
+h2 a {
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #FB667A;
+  text-decoration: none;
+}
+
+.blue { color: #185875; }
+.yellow { color: #FFF842; }
+
+.container th h1 {
+      font-weight: bold;
+      font-size: 1em;
+  text-align: left;
+  color: #185875;
+}
+
+.container td {
+      color:#FFF;
+      font-weight: normal;
+      font-size: 1em;
+  -webkit-box-shadow: 0 2px 2px -2px #0E1119;
+       -moz-box-shadow: 0 2px 2px -2px #0E1119;
+            box-shadow: 0 2px 2px -2px #0E1119;
+}
+
+.container {
+      text-align: left;
+      overflow: hidden;
+      width: 80%;
+      margin: 0 auto;
+  display: table;
+  padding: 0 0 8em 0;
+}
+
+.container td, .container th {
+      padding-bottom: 2%;
+      padding-top: 2%;
+  padding-left:2%;  
+}
+
+/* Background-color of the odd rows */
+.container tr:nth-child(odd) {
+      background-color: #323C50;
+}
+
+/* Background-color of the even rows */
+.container tr:nth-child(even) {
+      background-color: #2C3446;
+}
+
+.container th {
+      background-color: #FFF;
+}
+
+.container td:first-child { color: #FB667A; }
+
+.container tr:hover {
+   background-color: #464A52;
+-webkit-box-shadow: 0 6px 6px -6px #0E1119;
+       -moz-box-shadow: 0 6px 6px -6px #0E1119;
+            box-shadow: 0 6px 6px -6px #0E1119;
+}
+
+.container td:hover {
+  background-color: #FFF842;
+  color: #403E10;
+  font-weight: bold;
+  
+  box-shadow: #7F7C21 -1px 1px, #7F7C21 -2px 2px, #7F7C21 -3px 3px, #7F7C21 -4px 4px, #7F7C21 -5px 5px, #7F7C21 -6px 6px;
+  transform: translate3d(6px, -6px, 0);
+  
+  transition-delay: 0s;
+      transition-duration: 0.4s;
+      transition-property: all;
+  transition-timing-function: line;
+}
+
+@media (max-width: 800px) {
+.container td:nth-child(4),
+.container th:nth-child(4) { display: none; }
+}
+
+a {
+  position: relative;
+  color: #03e9f4;
+  font-size: 16px;
+  text-decoration: none;
+  text-transform: uppercase;
+  overflow: hidden;
+  transition: .5s;
+  margin-top: 40px;
+  letter-spacing: 4px
+  
+}
+
+.login-box a:hover {
+  background: #03e9f4;
+  color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 0 5px #03e9f4,
+              0 0 25px #03e9f4,
+              0 0 50px #03e9f4,
+              0 0 100px #03e9f4;
+}
+
+.comment {
+  position: relative;
+  color: #FFF;
+  font-size: 14px;
+  text-transform: uppercase;
+  overflow: hidden;
+  transition: .5s;
+  margin-top: 40px;
+  background-color: #c01c76;
+  border-radius: 10px; /* Köşeleri oval yapmak için */
+}
+
+.comment:hover {
+  box-shadow: 0 0 10px #03e9f4, 0 0 10px #03e9f4, 0 0 20px #03e9f4; /* Glow efekti eklemek için */
+}
+
+label {
+  color: #c01c76; /* Renk örneği: Pembe */
+  font-weight: bold; /* Metni kalın hale getirir */
+}
+
+input {
+  border-radius: 8px; /* Köşeleri hafifçe oval yapar */
+  padding: 10px; /* Input içerisindeki içeriğin etrafındaki dolgu boyutunu belirler */
+  font-size: 16px; /* Yazı boyutunu büyütür */
+  width: 250px; /* Input genişliğini belirler */
+  height: 40px; /* Input yüksekliğini belirler */
+}
+
+.delete {
+  position: relative;
+  color: #FFF;
+  font-size: 14px;
+  text-transform: uppercase;
+  overflow: hidden;
+  transition: .5s;
+  margin-top: 40px;
+  background-color: #03e9f4;
+  border-radius: 10px; /* Köşeleri oval yapmak için */
+  font-size: 16px; /* Yazı boyutunu büyütür */
+  width: 250px; /* Input genişliğini belirler */
+  height: 40px; /* Input yüksekliğini belirle
+}
+
+.delete:hover {
+  box-shadow: 0 0 10px #03e9f4, 0 0 10px #03e9f4, 0 0 20px #03e9f4; /* Glow efekti eklemek için */
+}
+
+td{
+
+}

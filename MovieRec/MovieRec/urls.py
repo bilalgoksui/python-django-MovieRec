@@ -52,6 +52,7 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     # path('profile/update', views.update_profile, name='update_profile'),
     path('profile/changepassword/', views.change_password, name='change_password'),
+    path('deleteprofile/', views.delete_profile, name='delete_profile'),
 
     # path('activateaccount/', views.activate_account, name='activate_account'),
     path('activate/<str:token>/', views.activate_account, name='activate_account'),

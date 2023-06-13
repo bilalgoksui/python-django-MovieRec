@@ -282,17 +282,9 @@ def profile(request):
     return render(request, 'profile.html', {'user': user})
 
 def delete_profile(request):
-    if request.method == 'POST':
-        username_ = request.POST.get('username')
-        email_ = request.POST.get('email')
-        user = request.user
-
-        # Update user object with new data
-        user.username = username_
-        user.email = email_
-        user.save()
-
-    return redirect('profile')
+    user = request.user
+    user.delete()
+    return redirect('login')
 
 @login_required(login_url='login')
 def change_password(request):

@@ -36,10 +36,10 @@
             <tr>
                 <td>{{ item.movie_name }}</td>
                 <td>
-                    <input type="checkbox" id="is_watched_checkbox_{{ forloop.counter }}" name="is_watched_checkbox" {% if item.is_watched %}checked{% endif %} onchange="toggleWatched(this, '{{ item.id }}')">
+                    <input class="delete" type="checkbox" id="is_watched_checkbox_{{ forloop.counter }}" name="is_watched_checkbox" {% if item.is_watched %}checked{% endif %} onchange="toggleWatched(this, '{{ item.id }}')">
                 </td>
                 <td>
-                    <button onclick="deleteItem('{{ item.id }}')">Delete</button>
+                    <button class="delete" onclick="deleteItem('{{ item.id }}')">Delete</button>
                 </td>
             </tr>
             {% endfor %}
