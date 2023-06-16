@@ -281,6 +281,7 @@ def profile(request):
     user = request.user
     return render(request, 'profile.html', {'user': user})
 
+# @login_required(login_url='login')
 def delete_profile(request):
     user = request.user
     user.delete()
@@ -303,9 +304,9 @@ def change_password(request):
                 login(request, user)
                 return redirect('profile')
             else:
-                return HttpResponse('Yeni şifreler eşleşmiyor.')
+                 return render(request, 'errorforpass1.html')
         else:
-            return HttpResponse('Eski şifre yanlış.')
+                return render(request, 'errorforpass1.html')
 
     return render(request, 'changepassword.html')
 
@@ -326,17 +327,26 @@ def forgot_password(request):
         email_ = request.POST.get("email")
         if email_:
             signer = Signer()
-            user = User.objects.get(email=email_)
-            user_id = urlsafe_base64_encode(force_bytes(user.pk))
-            token = signer.sign(user_id)
-            current_site = get_current_site(request)
-            reset_url = reverse('reset_password', kwargs={'user_id': user_id, 'token': token, 'user_email': email_})
-            reset_url = request.build_absolute_uri(reset_url)
-            mail_subject = 'Reset your password'
-            mail_message = f"Click the following link to reset your password: {reset_url}"
-            send_mail(mail_subject, mail_message, 'settings.EMAIL_HOST_USER', [email_], fail_silently=False)
-    return render(request, 'forgotpassword.html')
+            try:
+                user = User.objects.get(email=email_)
+            except:
+                return render(request, 'errorforforgotpass.html')
 
+            if user is not None:
+                user_id = urlsafe_base64_encode(force_bytes(user.pk))
+                token = signer.sign(user_id)
+                current_site = get_current_site(request)
+                reset_url = reverse('reset_password', kwargs={'user_id': user_id, 'token': token, 'user_email': email_})
+                reset_url = request.build_absolute_uri(reset_url)
+                mail_subject = 'Reset your password'
+                mail_message = f"Click the following link to reset your password: {reset_url}"
+                send_mail(mail_subject, mail_message, 'settings.EMAIL_HOST_USER', [email_], fail_silently=False)
+            else :
+                return render(request, 'errorforforgotpass.html')
+
+                
+    return render(request, 'forgotpassword.html')
+    
 def reset_password(request, user_id, token, user_email):
     try:
         signer = Signer()
